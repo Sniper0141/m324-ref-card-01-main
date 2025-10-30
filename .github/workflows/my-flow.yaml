@@ -1,0 +1,24 @@
+name: MyFlow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'     
+      - name: Build & Test
+        run: mvn -B -ntp verify
+      - name: Deploy
+        run: mvn -B -ntp deploy
