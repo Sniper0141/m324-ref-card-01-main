@@ -22,3 +22,7 @@ jobs:
         run: mvn -B -ntp verify
       - name: Deploy
         run: mvn -B -ntp deploy
+      - name: Verify Java
+        run: |
+          echo "JAVA_HOME is $JAVA_HOME"
+          java -version
