@@ -25,6 +25,6 @@ jobs:
           echo "JAVA_HOME is $JAVA_HOME"
           java -version
       - name: Deploy
-        run: mvn -s .github/maven-settings.xml -B -ntp deploy
+        run: mvn -s .github/settings.xml -B -ntp deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
