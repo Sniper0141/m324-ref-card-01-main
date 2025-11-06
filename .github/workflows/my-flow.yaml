@@ -1,30 +1,36 @@
-name: MyFlow
+name: Java CI with Maven and Docker
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'     
-      - name: Build & Test
-        run: mvn -B -ntp verify
-      - name: Verify Java
-        run: |
-          echo "JAVA_HOME is $JAVA_HOME"
-          java -version
-      - name: Deploy
-        run: mvn -s .github/settings.xml -B -ntp deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build with Maven
+      run: mvn -B -ntp clean install
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/refcard-app:latest .
+
+    - name: Push to Docker Hub
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/refcard-app:latest
